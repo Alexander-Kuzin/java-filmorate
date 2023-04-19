@@ -2,15 +2,13 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import javax.validation.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Slf4j
 @RestController
@@ -18,8 +16,7 @@ import java.util.Set;
 public class UserController {
     private static ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
     private static Validator validator = validatorFactory.usingContext().getValidator();
-
-    private final HashMap<Long, User> users = new HashMap<>();
+    private final Map<Long, User> users = new HashMap<>();
     private Long id = 0L;
 
     @PostMapping
@@ -59,7 +56,7 @@ public class UserController {
 
     private void validateAndSaveUser(User user) {
         try {
-            if (user.getName() == null || user.getName().isBlank()) {
+            if (StringUtils.isBlank(user.getName())) {
                 user.setName(user.getLogin());
             }
 

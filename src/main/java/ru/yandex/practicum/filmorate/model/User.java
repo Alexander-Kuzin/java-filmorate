@@ -25,6 +25,4 @@ public class User {
     private String name; // fixme имя для отображения может быть пустым — в таком случае будет использован логин;
     @BirthDay
     private LocalDate birthday;
-
-
 }
