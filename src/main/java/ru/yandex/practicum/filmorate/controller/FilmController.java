@@ -18,6 +18,11 @@ public class FilmController {
     private static ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
     private static Validator validator = validatorFactory.usingContext().getValidator();
 
+    static {
+        ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
+        validator = validatorFactory.usingContext().getValidator();
+    }
+
     private final Map<Long, Film> films = new HashMap<>();
     Long id = 0L;
 
