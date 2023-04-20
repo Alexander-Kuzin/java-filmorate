@@ -19,7 +19,7 @@ public class FilmController {
     private static Validator validator = validatorFactory.usingContext().getValidator();
 
     private final Map<Long, Film> films = new HashMap<>();
-    private Long id = 0L;
+    private static Long id = 0L;
 
     private Long getNewFilmId() {
         return ++id;

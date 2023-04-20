@@ -17,7 +17,7 @@ public class UserController {
     private static ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
     private static Validator validator = validatorFactory.usingContext().getValidator();
     private final Map<Long, User> users = new HashMap<>();
-    private Long id = 0L;
+    private static Long id = 0L;
 
     @PostMapping
     @SneakyThrows
