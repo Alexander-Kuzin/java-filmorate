@@ -4,11 +4,14 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.time.LocalDate;
+import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -23,8 +26,8 @@ class UserControllerTest {
 
     @BeforeAll
     public static void beforeEach() {
-        userController = new UserController();
-        user = User.builder().id(1L).email("mail@ya.ru").birthday(LocalDate.now().minusDays(1)).login("login").username("username").build();
+        userController = new UserController(new UserService( new InMemoryUserStorage()));
+        user = User.builder().id(1L).email("mail@ya.ru").birthday(LocalDate.now().minusDays(1)).login("login").username("username").friendsId(new HashSet<>()).build();
     }
 
     @Test

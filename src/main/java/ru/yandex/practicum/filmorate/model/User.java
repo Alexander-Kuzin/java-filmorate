@@ -9,6 +9,8 @@ import ru.yandex.practicum.filmorate.annotations.HasNoSpaces;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -22,7 +24,16 @@ public class User {
     @NotBlank
     @HasNoSpaces
     private String login;
-    private String name; // fixme имя для отображения может быть пустым — в таком случае будет использован логин;
+    private String name;
     @BirthDay
     private LocalDate birthday;
+    private Set<Long> friendsId;
+
+
+    public void setFriendsId(Long friendsId) {
+        if (this.friendsId == null) {
+            this.friendsId = new HashSet<>();
+        }
+        this.friendsId.add(friendsId);
+    }
 }

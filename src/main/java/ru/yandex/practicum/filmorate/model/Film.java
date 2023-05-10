@@ -9,6 +9,8 @@ import ru.yandex.practicum.filmorate.annotations.ReleaseDate;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -23,4 +25,12 @@ public class Film {
     private LocalDate releaseDate;
     @PositiveOrZero
     private Integer duration;
+    private Set<Long> likedFilms;
+
+    public void addLikedFilm(Long userId) {
+        if (this.likedFilms == null) {
+            this.likedFilms = new HashSet<>();
+        }
+        this.likedFilms.add(userId);
+    }
 }
