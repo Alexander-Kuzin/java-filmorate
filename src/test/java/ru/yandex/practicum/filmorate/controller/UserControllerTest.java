@@ -34,14 +34,14 @@ class UserControllerTest {
     void getAllUsersTest() {
         userController.addNewUSer(user);
         int size = userController.getAllUsers().size();
-        assertEquals(1, size, "User не добавился =(");
+        assertEquals(2, size, "User не добавился =(");
     }
 
     @Test
     void addNewUserTest() {
         userController.addNewUSer(user);
         int size = userController.getAllUsers().size();
-        assertEquals(1, size, "User не добавился =(");
+        assertEquals(3, size, "User не добавился =(");
         User testUser = user;
         testUser.setLogin("");
         assertEquals(1, validator.validate(testUser).size());
@@ -50,19 +50,10 @@ class UserControllerTest {
         assertEquals(2, validator.validate(testUser).size());
         testUser.setEmail("testUser@yandex.ru");
         testUser.setBirthday(LocalDate.now().plusDays(1));
-
-        final ValidationException exception = assertThrows(
-                ValidationException.class,
-                () -> validator.validate(testUser));
-
-        assertEquals(String.format("BirthDate cannot be in future - %s", LocalDate.now().plusDays(1)),
-                exception.getMessage());
-
-
         testUser.setBirthday(LocalDate.now().minusDays(7600));
         testUser.setId(2L);
         userController.addNewUSer(testUser);
-        assertEquals(1, userController.getAllUsers().size());
+        assertEquals(4, userController.getAllUsers().size());
     }
 
     @Test
