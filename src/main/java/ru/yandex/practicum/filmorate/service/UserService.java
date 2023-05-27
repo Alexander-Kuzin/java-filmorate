@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -73,7 +74,10 @@ public class UserService {
     }
 
     private static <T> Set<T> findCommonElements(Collection<T> first, Collection<T> second) {
-        return first.stream().filter(second::contains).collect(Collectors.toSet());
+        if (first != null || second != null) {
+            return first.stream().filter(second::contains).collect(Collectors.toSet());
+        }
+        return new HashSet<>();
     }
 
     public void deleteUser(long id) {

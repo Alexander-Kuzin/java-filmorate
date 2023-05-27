@@ -20,7 +20,7 @@ public class ErrorHandler {
 
     @ExceptionHandler({FilmNotFoundException.class, UserNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleNotFoundException(final RuntimeException e) {
+        public ErrorResponse handleNotFoundException(final RuntimeException e) {
         log.error("Response status 404 Not found {}", e.getMessage(), e);
         return new ErrorResponse("Request data was not found", e.getMessage());
     }

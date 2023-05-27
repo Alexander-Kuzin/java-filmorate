@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
@@ -80,11 +81,11 @@ public class FilmControllerTest {
         assertEquals(1, validator.validate(minusDur).size());
         assertEquals(1, validator.validate(noNameFilm).size());
 
-        final NullPointerException exception = assertThrows(
-                NullPointerException.class,
+        final FilmNotFoundException exception = assertThrows(
+                FilmNotFoundException.class,
                 () -> filmController.addOrUpdateFilm(badReleaseDateFilm));
         filmController.addOrUpdateFilm(filmToUpdate);
-        Film example = filmController.getAllFilms().get(1);
+        Film example = filmController.getAllFilms().get(0);
         assertEquals(filmToUpdate, example, "Разные фильмы");
     }
 

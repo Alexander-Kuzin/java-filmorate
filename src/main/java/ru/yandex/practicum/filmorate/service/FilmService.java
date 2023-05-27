@@ -10,10 +10,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -85,7 +82,12 @@ public class FilmService {
     }
 
     private void saveFilm(Film film) {
-        film.setId(filmStorage.getNewId());
+        if (film.getId() == null) {
+            film.setId(filmStorage.getNewId());
+        }
+        if (film.getLikedFilms() == null) {
+            film.setLikedFilms(new HashSet<>());
+        }
         filmStorage.addNewFilm(film);
         log.info("Saved film {}", film);
     }
