@@ -38,6 +38,7 @@ public class ErrorHandler {
         log.error("Response status 400 Bad request {}", e.getMessage(), e);
         return new ErrorResponse("Request validation error", e.getMessage());
     }
+
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleMethodArgumentNotValidException(final MethodArgumentNotValidException e) {
@@ -46,7 +47,7 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
-    public ResponseEntity<String> handleConstraintViolationException(ConstraintViolationException e){
+    public ResponseEntity<String> handleConstraintViolationException(ConstraintViolationException e) {
         log.error("Response status 400 Bad request {}", e.getMessage(), e);
         return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
