@@ -1,50 +1,31 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
-    UserStorage userStorage;
-    private static ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
-    private static Validator validator = validatorFactory.usingContext().getValidator();
-
-    @Autowired
-    public UserService(UserStorage userStorage) {
-        this.userStorage = userStorage;
-    }
+    private final UserStorage userStorage;
 
     public User addNewUser(User user) {
-        User userToCreate = User.builder()
-                .id(user.getId())
-                .email(user.getEmail())
-                .login(user.getLogin())
-                .name(user.getName())
-                .birthday(user.getBirthday())
-                .friendsId(user.getFriendsId())
-                .build();
-        validateAndSaveUser(userToCreate);
-        return userToCreate;
+        validateAndSaveUser(user);
+        return user;
     }
 
-    public User updateUser(User user) throws ValidationException {
+    public User updateUser(User user) {
         if (user.getId() == null) {
             throw new ValidationException("User ID cannot be null");
         }
@@ -92,10 +73,7 @@ public class UserService {
     }
 
     private static <T> Set<T> findCommonElements(Collection<T> first, Collection<T> second) {
-        if (first != null || second != null) {
-            return first.stream().filter(second::contains).collect(Collectors.toSet());
-        }
-        return new HashSet<>();
+        return first.stream().filter(second::contains).collect(Collectors.toSet());
     }
 
     public void deleteUser(long id) {
@@ -107,22 +85,14 @@ public class UserService {
             if (StringUtils.isBlank(user.getName())) {
                 user.setName(user.getLogin());
             }
-
-            Set<ConstraintViolation<User>> validates = validator.validate(user);
-            if (!validates.isEmpty()) {
-                throw new ValidationException("User data has incorrect values ");
-            } else {
-                saveUser(user);
-            }
+            saveUser(user);
         } catch (ValidationException e) {
             log.error(String.format("Check user data %s ", user));
         }
     }
 
     private void saveUser(User user) {
-        if (user.getId() == null) {
-            user.setId(userStorage.getNewId());
-        }
+        user.setId(userStorage.getNewId());
         userStorage.addNewUser(user);
         log.info("Saved user {}", user);
     }

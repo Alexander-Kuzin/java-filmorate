@@ -10,33 +10,23 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class FilmService {
-    private static ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
-    private static Validator validator = validatorFactory.usingContext().getValidator();
+
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
 
     public Film addNewFilm(Film film) {
-        Film filmToSave = Film.builder()
-                .id(film.getId())
-                .name(film.getName())
-                .description(film.getDescription())
-                .duration(film.getDuration())
-                .releaseDate(film.getReleaseDate())
-                .likedFilms(film.getLikedFilms())
-                .build();
-        validateAndSaveFilm(filmToSave);
-        return filmToSave;
+        validateAndSaveFilm(film);
+        return film;
     }
 
     @SneakyThrows
@@ -76,10 +66,8 @@ public class FilmService {
     }
 
     public Collection<Film> getMostLikedFilms(int count) {
-        return filmStorage
-                .getAllFilms()
-                .stream()
-                .sorted(Comparator.comparingInt(f -> -f.getLikedFilms().size()))
+        return filmStorage.getAllFilms().stream()
+                .sorted(Collections.reverseOrder(Comparator.comparingInt(film -> film.getLikedFilms().size())))
                 .limit(count)
                 .collect(Collectors.toList());
     }
@@ -90,24 +78,14 @@ public class FilmService {
 
     private void validateAndSaveFilm(Film film) {
         try {
-            Set<ConstraintViolation<Film>> validates = validator.validate(film);
-            if (!validates.isEmpty()) {
-                throw new ValidationException("Film data has incorrect values ");
-            } else {
-                saveFilm(film);
-            }
+            saveFilm(film);
         } catch (ValidationException e) {
             log.error(String.format("Check film data %s ", film.toString()));
         }
     }
 
     private void saveFilm(Film film) {
-        if (film.getId() == null) {
-            film.setId(filmStorage.getNewId());
-        }
-        if (film.getLikedFilms() == null) {
-            film.setLikedFilms(new HashSet<>());
-        }
+        film.setId(filmStorage.getNewId());
         filmStorage.addNewFilm(film);
         log.info("Saved film {}", film);
     }

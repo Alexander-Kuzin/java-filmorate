@@ -5,10 +5,7 @@ import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Repository
 @Slf4j
@@ -29,10 +26,9 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film getFilm(long id) {
-        if (!films.containsKey(id)) {
-            throw new FilmNotFoundException("There is no Film with id = " + id);
-        }
-        return films.get(id);
+        return  Optional.ofNullable(Optional.of(films.get(id))
+                .orElseThrow(() -> new FilmNotFoundException("There is no Film with id = " + id)))
+                .orElseGet(() ->films.get(id));
     }
 
     @Override

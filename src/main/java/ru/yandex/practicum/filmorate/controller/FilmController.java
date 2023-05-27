@@ -1,25 +1,27 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
-import javax.validation.*;
-import java.util.*;
+import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @Slf4j
 @RestController
 @RequestMapping("/films")
+@Validated
+@RequiredArgsConstructor
 public class FilmController {
-    private FilmService filmService;
+    private final FilmService filmService;
 
-    @Autowired
-    public FilmController(FilmService filmService) {
-        this.filmService = filmService;
-    }
 
     @SneakyThrows
     @PostMapping
@@ -52,7 +54,7 @@ public class FilmController {
 
     @DeleteMapping("/{id}/like/{userId}")
     public void deleteLike(@PathVariable("id") long filmId,
-                           @PathVariable("userId") long userId) throws ValidationException {
+                           @PathVariable("userId") long userId) {
         log.info("New request to delete like.");
         filmService.deleteLike(filmId, userId);
     }
@@ -64,12 +66,9 @@ public class FilmController {
     }
 
     @GetMapping("/popular")
-    public Collection<Film> getMostPopularFilms(@RequestParam(required = false) Optional<Integer> count) {
+    public Collection<Film> getMostPopularFilms(@Positive @RequestParam(defaultValue = "10") Integer count) {
         log.info("New request to get most popular films.");
-        if (count.isPresent()) {
-            return filmService.getMostLikedFilms(count.get());
-        }
-        return filmService.getMostLikedFilms(10);
+        return filmService.getMostLikedFilms(count);
     }
 
     @DeleteMapping("{id}/delete")
