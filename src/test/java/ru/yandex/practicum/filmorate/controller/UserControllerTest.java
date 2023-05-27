@@ -26,7 +26,7 @@ class UserControllerTest {
 
     @BeforeAll
     public static void beforeEach() {
-        userController = new UserController(new UserService( new InMemoryUserStorage()));
+        userController = new UserController(new UserService(new InMemoryUserStorage()));
         user = User.builder().id(1L).email("mail@ya.ru").birthday(LocalDate.now().minusDays(1)).login("login").username("username").friendsId(new HashSet<>()).build();
     }
 
