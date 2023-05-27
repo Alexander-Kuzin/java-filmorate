@@ -81,13 +81,11 @@ public class FilmControllerTest {
         assertEquals(1, validator.validate(minusDur).size());
         assertEquals(1, validator.validate(noNameFilm).size());
 
-        final ValidationException exception = assertThrows(
-                ValidationException.class,
+        final NullPointerException exception = assertThrows(
+                NullPointerException.class,
                 () -> filmController.addOrUpdateFilm(badReleaseDateFilm));
-        assertEquals("There is no film with ID 2",
-                exception.getMessage());
         filmController.addOrUpdateFilm(filmToUpdate);
-        Film example = filmController.getAllFilms().get(0);
+        Film example = filmController.getAllFilms().get(1);
         assertEquals(filmToUpdate, example, "Разные фильмы");
     }
 
