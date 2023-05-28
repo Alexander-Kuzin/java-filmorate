@@ -9,7 +9,8 @@ import java.util.*;
 
 @Repository
 @Slf4j
-public class InMemoryFilmStorage implements FilmStorage {
+@Deprecated(since = "Sprint 11")
+public class InMemoryFilmStorage {
     private final Map<Long, Film> films = new HashMap<>();
     private Long id = 0L;
 
@@ -17,19 +18,19 @@ public class InMemoryFilmStorage implements FilmStorage {
         return ++id;
     }
 
-    @Override
+
     public Film addNewFilm(Film film) {
         films.put(film.getId(), film);
         log.info("Saved new Film - {} ", film);
         return film;
     }
 
-    @Override
+
     public Film getFilm(long id) {
         return Optional.ofNullable(films.get(id)).orElseThrow(() -> new FilmNotFoundException("There is no Film with id = " + id));
     }
 
-    @Override
+
     public Film updateFilm(Film film) {
         if (!films.containsKey(film.getId())) {
             throw new FilmNotFoundException("There is no Film with id = " + id);
@@ -39,7 +40,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         return film;
     }
 
-    @Override
+
     public void deleteFilm(long id) {
         if (!films.containsKey(id)) {
             throw new FilmNotFoundException("There is no Film with id = " + id);
@@ -48,7 +49,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         log.info("Film ID = {} was deleted", id);
     }
 
-    @Override
+
     public List<Film> getAllFilms() {
         return new ArrayList<>(films.values());
     }

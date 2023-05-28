@@ -10,6 +10,7 @@ import javax.validation.ConstraintValidatorContext;
 import java.time.LocalDate;
 
 @Slf4j
+@Deprecated(since = "Sprint 10")
 public class BirthDayValidator implements ConstraintValidator<BirthDay, LocalDate> {
 
     @Override

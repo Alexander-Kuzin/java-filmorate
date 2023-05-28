@@ -7,9 +7,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
-import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
-import ru.yandex.practicum.filmorate.exceptions.ValidationException;
+import ru.yandex.practicum.filmorate.exceptions.*;
 import ru.yandex.practicum.filmorate.model.ErrorResponse;
 
 import javax.validation.ConstraintViolationException;
@@ -18,11 +16,11 @@ import javax.validation.ConstraintViolationException;
 @RestControllerAdvice
 public class ErrorHandler {
 
-    @ExceptionHandler({FilmNotFoundException.class, UserNotFoundException.class})
+    @ExceptionHandler(EntityNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-        public ErrorResponse handleNotFoundException(final RuntimeException e) {
+    public ErrorResponse handleEntityNotFoundException(final RuntimeException e) {
         log.error("Response status 404 Not found {}", e.getMessage(), e);
-        return new ErrorResponse("Request data was not found", e.getMessage());
+        return new ErrorResponse("Request entity data was not found", e.getMessage());
     }
 
     @ExceptionHandler
@@ -37,6 +35,13 @@ public class ErrorHandler {
     public ErrorResponse handleValidationException(final ValidationException e) {
         log.error("Response status 400 Bad request {}", e.getMessage(), e);
         return new ErrorResponse("Request validation error", e.getMessage());
+    }
+
+    @ExceptionHandler(EntityAlreadyExistException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleEntityAlreadyExistException(final EntityAlreadyExistException e) {
+        log.error("Response status 400 Bad request {}", e.getMessage(), e);
+        return new ErrorResponse("Entity error", e.getMessage());
     }
 
     @ExceptionHandler

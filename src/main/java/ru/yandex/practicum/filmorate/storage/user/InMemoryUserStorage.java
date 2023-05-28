@@ -7,9 +7,11 @@ import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.*;
 
-@Repository
+
 @Slf4j
-public class InMemoryUserStorage implements UserStorage {
+@Repository
+@Deprecated (since = "Sprint 11")
+public class InMemoryUserStorage {
     private final Map<Long, User> users = new HashMap<>();
     private long id = 0L;
 
@@ -23,7 +25,7 @@ public class InMemoryUserStorage implements UserStorage {
         return user;
     }
 
-    @Override
+
     public User updateUser(User user) {
         if (!users.containsKey(user.getId())) {
             throw new UserNotFoundException(String.format("There is no user with ID %d", user.getId()));
@@ -33,12 +35,12 @@ public class InMemoryUserStorage implements UserStorage {
         return user;
     }
 
-    @Override
+
     public User getUser(long id) {
         return Optional.ofNullable(users.get(id)).orElseThrow(() -> new UserNotFoundException("There is no User with id = " + id));
     }
 
-    @Override
+
     public List<User> getAllUsers() {
         return new ArrayList<>(users.values());
     }
