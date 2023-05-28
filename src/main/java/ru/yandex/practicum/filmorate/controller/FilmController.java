@@ -1,93 +1,79 @@
 package ru.yandex.practicum.filmorate.controller;
 
-
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
 
-import javax.validation.*;
-import java.util.*;
+import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @Slf4j
 @RestController
 @RequestMapping("/films")
+@Validated
+@RequiredArgsConstructor
 public class FilmController {
+    private final FilmService filmService;
 
-    private static ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
-    private static Validator validator = validatorFactory.usingContext().getValidator();
-
-    private final Map<Long, Film> films = new HashMap<>();
-    private static Long id = 0L;
-
-    private Long getNewFilmId() {
-        return ++id;
-    }
 
     @SneakyThrows
     @PostMapping
     public Film addNewFilm(@Valid @RequestBody Film film) {
         log.info("New request to create film");
         log.debug("Film data {}", film);
-        Film filmToSave = Film.builder()
-                .id(film.getId())
-                .name(film.getName())
-                .description(film.getDescription())
-                .duration(film.getDuration())
-                .releaseDate(film.getReleaseDate())
-                .build();
-        validateAndSaveFilm(filmToSave);
-        return filmToSave;
+        return filmService.addNewFilm(film);
     }
 
     @PutMapping
     @SneakyThrows
     public Film addOrUpdateFilm(@Valid @RequestBody Film film) {
         log.info("New request to add or update film");
-        if (film.getId() == null) {
-            throw new ValidationException("ID cannot be null");
-        }
+        return filmService.updateFilm(film);
+    }
 
-        if (films.containsKey(film.getId())) {
-            validateAndSaveFilm(film);
-            films.put(film.getId(), film);
-        } else {
-            log.error("Incorrect request value ID");
-            throw new ValidationException(String.format("There is no film with ID %d", film.getId()));
-        }
-        return film;
+    @GetMapping("/{id}")
+    public Film getFilmById(@PathVariable("id") long id) {
+        log.info("New request get film by id {}", id);
+        return filmService.getFilmById(id);
+    }
+
+    @PutMapping("/{id}/like/{userId}")
+    @SneakyThrows
+    public Film addLike(@PathVariable("id") long filmId,
+                        @PathVariable("userId") long userId) {
+        log.info("New request to add like.");
+        return filmService.addLike(filmId, userId);
+    }
+
+    @DeleteMapping("/{id}/like/{userId}")
+    public void deleteLike(@PathVariable("id") long filmId,
+                           @PathVariable("userId") long userId) {
+        log.info("New request to delete like.");
+        filmService.deleteLike(filmId, userId);
     }
 
     @GetMapping
     public List<Film> getAllFilms() {
         log.info("New request to get all films");
-        return new ArrayList<>(films.values());
+        return new ArrayList<>(filmService.getAllFilms());
     }
 
-    private void validateAndSaveFilm(Film film) {
-        try {
-            Set<ConstraintViolation<Film>> validates = validator.validate(film);
-            if (!validates.isEmpty()) {
-                throw new ValidationException("Film data has incorrect values ");
-            } else {
-                saveFilm(film);
-            }
-        } catch (ValidationException e) {
-            log.error(String.format("Check film data %s ", film.toString()));
-        }
+    @GetMapping("/popular")
+    public Collection<Film> getMostPopularFilms(@Positive @RequestParam(defaultValue = "10") Integer count) {
+        log.info("New request to get most popular films.");
+        return filmService.getMostLikedFilms(count);
     }
 
-    private void saveFilm(Film film) {
-        if (film.getId() == null) {
-            film.setId(getNewFilmId());
-        }
-
-        if (films.containsKey(film.getId())) {
-            log.warn(String.format("There is a film with id %d", film.getId()));
-        } else {
-            films.put(film.getId(), film);
-            log.info("Saved film {}", film);
-        }
+    @DeleteMapping("{id}/delete")
+    public void deleteFilm(@PathVariable("id") long id) {
+        log.info("New request to get to delete film ID = {}.", id);
+        filmService.deleteFilm(id);
     }
 }
