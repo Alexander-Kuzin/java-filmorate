@@ -35,12 +35,9 @@ public class User {
     @PastOrPresent
     private LocalDate birthday;
     @JsonIgnore
-    private Set<Long> friendsId;
+    private Set<Long> friendsId = new HashSet<>();
 
     public void setFriendsId(Long friendsId) {
-        if (this.friendsId == null) {
-            this.friendsId = new HashSet<>();
-        }
         this.friendsId.add(friendsId);
     }
 

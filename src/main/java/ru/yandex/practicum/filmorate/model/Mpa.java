@@ -9,11 +9,8 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
-
 public enum Mpa {
-    /**
-     * https://ru.wikipedia.org/wiki/Система_рейтингов_Американской_киноассоциации
-     **/
+
     G(1, "G"),
     PG(2, "PG"),
     PG13(3, "PG-13"),

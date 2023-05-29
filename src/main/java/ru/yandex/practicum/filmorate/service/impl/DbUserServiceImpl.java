@@ -77,7 +77,7 @@ public class DbUserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getCommonFriends(Long idUser, Long idFriend) { //fixme OPTIONAL
+    public List<User> getCommonFriends(Long idUser, Long idFriend) {
         userStorage.getUser(idUser).orElseThrow(() ->
                 new EntityNotFoundException(String.format(
                         "Entity %s ID = %s not found", User.class.getName(), idUser)));
@@ -96,7 +96,7 @@ public class DbUserServiceImpl implements UserService {
                 .collect(Collectors.toList());
     }
 
-    private User checkUserName(User user) { //fixme
+    private User checkUserName(User user) {
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }

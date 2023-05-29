@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
-public enum Genre { //fixme sort & refactor list
+public enum Genre {
     COMEDY(1, "Комедия"),
     DRAMA(2, "Драма"),
     CARTOON(3, "Мультфильм"),

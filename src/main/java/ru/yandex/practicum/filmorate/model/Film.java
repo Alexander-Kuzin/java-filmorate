@@ -28,7 +28,6 @@ public class Film {
     private Integer duration;
     @JsonIgnore
     private Set<Long> likedFilms;
-
     private Mpa mpa;
     private Set<Genre> genres;
 
@@ -57,7 +56,7 @@ public class Film {
         this.releaseDate = releaseDate;
         this.duration = duration;
         this.mpa = mpa;
-        this.likedFilms = new LinkedHashSet<>();
+        this.likedFilms = new HashSet<>();
         this.genres = new LinkedHashSet<>();
     }
 }
