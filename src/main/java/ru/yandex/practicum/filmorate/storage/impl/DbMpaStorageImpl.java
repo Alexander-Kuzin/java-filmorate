@@ -17,10 +17,6 @@ import java.util.Optional;
 public class DbMpaStorageImpl implements MpaStorage {
     private final JdbcTemplate jdbcTemplate;
 
-//    public DbMpaStorageImpl(JdbcTemplate jdbcTemplate) {
-//        this.jdbcTemplate = jdbcTemplate;
-//    }
-
     @Override
     public Optional<List<Mpa>> getAllMpa() {
         String sqlQuery = "SELECT RATING_NAME FROM RATINGS";
