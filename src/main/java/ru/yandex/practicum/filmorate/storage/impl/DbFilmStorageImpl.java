@@ -87,7 +87,7 @@ public class DbFilmStorageImpl implements FilmStorage {
             return Optional.empty();
         }
 
-        assert film != null;
+        Objects.requireNonNull(film, "Film can`t be null");
 
         String sqlQueryGetGenres = "SELECT GENRE_NAME genre\n" +
                 "FROM GENRES_FILMS\n" +
@@ -123,40 +123,12 @@ public class DbFilmStorageImpl implements FilmStorage {
         String sqlQueryAddGenres = "INSERT INTO GENRES_FILMS (FILM_ID, GENRE_ID)\n" +
                 "values (?, ?)";
 
-        List<Genre> genres = new ArrayList<>(film.getGenres());
-        jdbcTemplate.batchUpdate(sqlQueryAddGenres, new BatchPreparedStatementSetter() {
-
-            @Override
-            @SneakyThrows
-            public void setValues(PreparedStatement ps, int i) {
-                ps.setLong(1, filmId);
-                ps.setInt(2, genres.get(i).getId());
-            }
-
-            @Override
-            public int getBatchSize() {
-                return genres.size();
-            }
-        });
+        universalBatchUpdate(sqlQueryAddGenres, filmId, new ArrayList<>(film.getGenres()));
 
         String sqlQueryAddLikes = "INSERT INTO LIKES_FILMS (FILM_ID, USER_ID)\n" +
                 "values (?, ?)";
 
-        List<Long> likes = new ArrayList<>(film.getLikedFilms());
-
-        jdbcTemplate.batchUpdate(sqlQueryAddLikes, new BatchPreparedStatementSetter() {
-            @Override
-            @SneakyThrows
-            public void setValues(PreparedStatement ps, int i) {
-                ps.setLong(1, filmId);
-                ps.setLong(2, likes.get(i));
-            }
-
-            @Override
-            public int getBatchSize() {
-                return likes.size();
-            }
-        });
+        universalBatchUpdate(sqlQueryAddLikes, filmId, new ArrayList<>(film.getLikedFilms()));
 
         return getFilm(filmId);
     }
@@ -192,20 +164,7 @@ public class DbFilmStorageImpl implements FilmStorage {
         String sqlQueryAddGenres = "INSERT INTO GENRES_FILMS (FILM_ID, GENRE_ID)\n" +
                 "values (?, ?)";
 
-        List<Genre> genres = new ArrayList<>(film.getGenres());
-        jdbcTemplate.batchUpdate(sqlQueryAddGenres, new BatchPreparedStatementSetter() {
-            @Override
-            @SneakyThrows
-            public void setValues(PreparedStatement ps, int i) {
-                ps.setLong(1, film.getId());
-                ps.setInt(2, genres.get(i).getId());
-            }
-
-            @Override
-            public int getBatchSize() {
-                return genres.size();
-            }
-        });
+        universalBatchUpdate(sqlQueryAddGenres, film.getId(), new ArrayList<>(film.getGenres()));
 
         String sqlQueryDeleteLikes = "DELETE FROM LIKES_FILMS\n" +
                 "WHERE FILM_ID = ?";
@@ -213,22 +172,29 @@ public class DbFilmStorageImpl implements FilmStorage {
         jdbcTemplate.update(sqlQueryDeleteLikes, film.getId());
         String sqlQueryAddLikes = "INSERT INTO LIKES_FILMS (FILM_ID, USER_ID)\n" +
                 "values (?, ?)";
-        List<Long> likes = new ArrayList<>(film.getLikedFilms());
-        jdbcTemplate.batchUpdate(sqlQueryAddLikes, new BatchPreparedStatementSetter() {
+        universalBatchUpdate(sqlQueryAddLikes, film.getId(), new ArrayList<>(film.getLikedFilms()));
+        return getFilm(film.getId());
+    }
+
+    private void universalBatchUpdate(String sqlQuery, Long filmId, ArrayList<Object> data) {
+        jdbcTemplate.batchUpdate(sqlQuery, new BatchPreparedStatementSetter() {
             @Override
             @SneakyThrows
             public void setValues(PreparedStatement ps, int i) {
-                ps.setLong(1, film.getId());
-                ps.setLong(2, likes.get(i));
+                ps.setLong(1, filmId);
+                if (data.get(0) instanceof Genre) {
+                    Genre genre = (Genre) data.get(i);
+                    ps.setInt(2, genre.getId());
+                } else {
+                    ps.setLong(2, (Long) data.get(i));
+                }
             }
 
             @Override
             public int getBatchSize() {
-                return likes.size();
+                return data.size();
             }
         });
-
-        return getFilm(film.getId());
     }
 
 }

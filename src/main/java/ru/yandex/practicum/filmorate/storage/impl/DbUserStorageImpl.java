@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 import ru.yandex.practicum.filmorate.storage.mapper.Mapper;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Repository
@@ -51,8 +52,7 @@ public class DbUserStorageImpl implements UserStorage {
             return Optional.empty();
         }
 
-        assert user != null;
-
+        Objects.requireNonNull(user, "User can`t be null");
         return Optional.of(user);
     }
 

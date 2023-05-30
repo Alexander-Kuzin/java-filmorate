@@ -57,6 +57,6 @@ public class Film {
         this.duration = duration;
         this.mpa = mpa;
         this.likedFilms = new HashSet<>();
-        this.genres = new LinkedHashSet<>();
+        this.genres = new HashSet<>();
     }
 }
