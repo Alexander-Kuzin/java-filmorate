@@ -22,7 +22,6 @@ import java.util.List;
 public class FilmController {
     private final FilmService filmService;
 
-
     @SneakyThrows
     @PostMapping
     public Film addNewFilm(@Valid @RequestBody Film film) {
@@ -66,14 +65,9 @@ public class FilmController {
     }
 
     @GetMapping("/popular")
-    public Collection<Film> getMostPopularFilms(@Positive @RequestParam(defaultValue = "10") Integer count) {
+    public Collection<Film> getMostPopularFilms(@Positive @RequestParam(defaultValue = "10") Long count) {
         log.info("New request to get most popular films.");
         return filmService.getMostLikedFilms(count);
     }
 
-    @DeleteMapping("{id}/delete")
-    public void deleteFilm(@PathVariable("id") long id) {
-        log.info("New request to get to delete film ID = {}.", id);
-        filmService.deleteFilm(id);
-    }
 }

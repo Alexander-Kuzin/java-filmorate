@@ -18,10 +18,9 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
 
-
     @PostMapping
     @SneakyThrows
-    public User addNewUSer(@Valid @RequestBody User user) {
+    public User addNewUser(@Valid @RequestBody User user) {
         log.info("New request to create user");
         log.debug("User data {}", user);
         return userService.addNewUser(user);
@@ -43,7 +42,7 @@ public class UserController {
     @GetMapping("/{id}")
     @SneakyThrows
     public User getUser(@PathVariable("id") long id) {
-        return userService.getUser(id);
+        return userService.getUserById(id);
     }
 
     @GetMapping("/{id}/friends")
@@ -78,8 +77,4 @@ public class UserController {
         return userService.getCommonFriends(userId, otherId);
     }
 
-    @DeleteMapping("/{id}/delete")
-    public void deleteFilm(@PathVariable("id") long id) {
-        userService.deleteUser(id);
-    }
 }
